@@ -4,13 +4,13 @@ import { getToken } from 'next-auth/jwt';
 export default async function middleware(request: NextRequest) {
   const token = await getToken({ 
     req: request,
-    secret: process.env.NEXTAUTH_SECRET || 'fallback-secret-for-development'
+    secret: process.env.NEXTAUTH_SECRET || 'fallback-secret-for-development',
   });
-  
+
   const { pathname } = request.nextUrl;
-  
-  // Protect dashboard routes - require author role
-  if (pathname.startsWith('/dashboard')) {
+
+  // Protect dashboard and post routes
+  if (pathname.startsWith('/dashboard') || pathname.startsWith('/api/posts')) {
     if (!token || !token.roles?.includes('author')) {
       return NextResponse.redirect(new URL('/unauthorized', request.url));
     }
@@ -22,6 +22,6 @@ export default async function middleware(request: NextRequest) {
 export const config = {
   matcher: [
     '/dashboard/:path*',
-    '/api/posts/:path*'
-  ]
+    '/api/posts/:path*',
+  ],
 };

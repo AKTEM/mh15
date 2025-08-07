@@ -1,8 +1,7 @@
-import type { NextAuthConfig } from 'next-auth';
+import type { NextAuthOptions } from 'next-auth';
 import type { JWT } from 'next-auth/jwt';
 
-export const authConfig = {
-  trustHost: true,
+export const authConfig: NextAuthOptions = {
   useSecureCookies: process.env.NODE_ENV === 'production',
   pages: {
     signIn: '/auth/signin',
@@ -30,16 +29,6 @@ export const authConfig = {
       return session;
     },
   },
-  authorized({ auth, request: { nextUrl } }) {
-    const isLoggedIn = !!auth?.user;
-    const isOnDashboard = nextUrl.pathname.startsWith('/dashboard');
-    
-    if (isOnDashboard) {
-      if (isLoggedIn && auth?.user?.roles?.includes('author')) return true;
-      return false;
-    }
-    
-    return true;
-  },
-  providers: [],
-} satisfies NextAuthConfig;
+  providers: [], // Add your providers like Google, Credentials, etc.
+};
+
