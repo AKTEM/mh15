@@ -120,7 +120,7 @@ export interface TransformedPost {
 
 // Cache for API responses
 const cache = new Map();
-const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
+const CACHE_DURATION = 30 * 60 * 1000; // 30 minutes for static builds
 
 async function fetchWithCache(url: string, options?: RequestInit) {
   const cacheKey = url + JSON.stringify(options);
@@ -132,7 +132,7 @@ async function fetchWithCache(url: string, options?: RequestInit) {
 
   try {
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+    const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout for builds
     
     const response = await fetch(url, {
       ...options,
@@ -162,7 +162,8 @@ async function fetchWithCache(url: string, options?: RequestInit) {
     if (cached) {
       return cached.data;
     }
-    throw error;
+    // Return empty array instead of throwing for static builds
+    return [];
   }
 }
 
@@ -210,6 +211,11 @@ export async function getCategories(): Promise<WordPressCategory[]> {
 export async function getPostsByCategory(categorySlug: string, limit: number = 10): Promise<WordPressPost[]> {
   try {
     const categories = await getCategories();
+    if (!categories || categories.length === 0) {
+      console.warn(`No categories available for ${categorySlug}`);
+      return [];
+    }
+    
     const category = categories.find(cat => cat.slug === categorySlug);
     
     if (!category) {

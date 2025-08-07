@@ -48,12 +48,19 @@ async function getHomePageData() {
   try {
     // Fetch articles from specific categories for hero section
     const targetCategories = ['politics', 'business', 'technology', 'health', 'sports', 'entertainment'];
-    const heroArticlesPromises = targetCategories.map(category => 
-      getPostsByCategory(category, 3).then(posts => posts.map(transformPost))
+    const heroArticlesPromises = targetCategories.map(async category => {
+      try {
+        const posts = await getPostsByCategory(category, 3);
+        return posts.map(transformPost);
+      } catch (error) {
+        console.error(`Error fetching ${category} posts:`, error);
+        return [];
+      }
+    }
     );
     
     // Get Editor's Picks from WordPress (sticky posts)
-    const editorsPicksPromise = getEditorsPicks(3);
+    const editorsPicksPromise = getEditorsPicks(3).catch(() => []);
     
     const [
       latestHeadlines,
@@ -79,27 +86,27 @@ async function getHomePageData() {
       canadaNews,
       ...categoryArticles
     ] = await Promise.allSettled([
-      getLatestHeadlines(3),
+      getLatestHeadlines(3).catch(() => []),
       editorsPicksPromise,
-      getDailyMaple(20),
-      getMapleTravel(20),
-      getThroughTheLens(20),
-      getFeaturedArticles(20),
-      getMapleVoices(20),
-      getExploreCanada(20),
-      getResources(20),
-      getEvents(20),
-      getYouMayHaveMissed(20),
-      getBookNook(20),
-      getTheFridayPost(20),
-      getPosts({ per_page: 9, _embed: true }).then(posts => posts.map(transformPost)),
-      getAfricaNews(20),
-      getAmericasNews(20),
-      getAustraliaNews(20),
-      getAsiaNews(20),
-      getEuropeNews(20),
-      getUKNews(20),
-      getCanadaNews(20),
+      getDailyMaple(20).catch(() => []),
+      getMapleTravel(20).catch(() => []),
+      getThroughTheLens(20).catch(() => []),
+      getFeaturedArticles(20).catch(() => []),
+      getMapleVoices(20).catch(() => []),
+      getExploreCanada(20).catch(() => []),
+      getResources(20).catch(() => []),
+      getEvents(20).catch(() => []),
+      getYouMayHaveMissed(20).catch(() => []),
+      getBookNook(20).catch(() => []),
+      getTheFridayPost(20).catch(() => []),
+      getPosts({ per_page: 9, _embed: true }).then(posts => posts.map(transformPost)).catch(() => []),
+      getAfricaNews(20).catch(() => []),
+      getAmericasNews(20).catch(() => []),
+      getAustraliaNews(20).catch(() => []),
+      getAsiaNews(20).catch(() => []),
+      getEuropeNews(20).catch(() => []),
+      getUKNews(20).catch(() => []),
+      getCanadaNews(20).catch(() => []),
       ...heroArticlesPromises
     ]);
 

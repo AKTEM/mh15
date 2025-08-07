@@ -1,9 +1,8 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { useSession, signOut } from 'next-auth/react';
 import Link from 'next/link';
-import { useRouter, usePathname } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { Search, Menu, X, User, Bell, Moon, Sun, ChevronDown, ChevronUp, Leaf, LogOut, Settings } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -17,6 +16,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Badge } from '@/components/ui/badge';
 import Image from "next/image";
+import { useSession, signOut } from 'next-auth/react';
 
 
 const breakingNews = [
@@ -36,7 +36,7 @@ export function Header() {
   const [currentNewsIndex, setCurrentNewsIndex] = useState(0);
   const [mounted, setMounted] = useState(false);
   const { theme, setTheme } = useTheme();
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const router = useRouter();
 
   // Prevent hydration mismatch
@@ -245,7 +245,7 @@ export function Header() {
             </Button>
 
             {/* Authentication Buttons - Desktop */}
-            {!session && (
+            {status !== 'loading' && !session && (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" size="sm" className="text-gray-700 dark:text-gray-300 hover:text-red-600">
@@ -289,7 +289,7 @@ export function Header() {
         )}
 
         {/* User Menu */}
-        {session ? (
+        {status !== 'loading' && session ? (
           <div className="hidden lg:flex items-center space-x-2">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -502,7 +502,7 @@ export function Header() {
               </div>
               
               {/* Mobile Authentication */}
-              {!session && (
+              {status !== 'loading' && !session && (
                 <div className="border-t border-gray-200 dark:border-gray-800 pt-4">
                   <div className="flex flex-col space-y-2">
                     <Link 
@@ -524,7 +524,7 @@ export function Header() {
               )}
               
               {/* Mobile User Menu */}
-              {session && (
+              {status !== 'loading' && session && (
                 <div className="border-t border-gray-200 dark:border-gray-800 pt-4">
                   <div className="flex items-center space-x-3 mb-4">
                     <div className="w-8 h-8 bg-red-600 rounded-full flex items-center justify-center">

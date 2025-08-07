@@ -39,7 +39,7 @@ export function ArticleClientPage({ article }: ArticleClientPageProps) {
     async function fetchLatestHeadlines() {
       try {
         setIsLoading(true);
-        const headlines = await getLatestHeadlines(3);
+        const headlines = await getLatestHeadlines(3).catch(() => []);
         setLatestHeadlines(headlines);
       } catch (error) {
         console.error('Error fetching latest headlines:', error);

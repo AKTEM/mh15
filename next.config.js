@@ -1,5 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  output: 'export',
+  trailingSlash: true,
+  skipTrailingSlashRedirect: true,
   eslint: {
     ignoreDuringBuilds: true,
   },
@@ -7,13 +10,8 @@ const nextConfig = {
     unoptimized: true,
     domains: ['mapleepoch.com', 'images.pexels.com'],
   },
-  trailingSlash: true,
   experimental: {
-    serverComponentsExternalPackages: ['next-auth'],
-  },
-  // Ensure all dynamic routes are handled properly
-  generateBuildId: async () => {
-    return 'build-' + Date.now();
+    esmExternals: 'loose',
   },
   webpack: (config, { isServer }) => {
     if (!isServer) {

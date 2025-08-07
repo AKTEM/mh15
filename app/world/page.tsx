@@ -24,13 +24,13 @@ async function getWorldData() {
       ukNews,
       canadaNews
     ] = await Promise.allSettled([
-      getAfricaNews(3),
-      getAmericasNews(3),
-      getAustraliaNews(3),
-      getAsiaNews(3),
-      getEuropeNews(3),
-      getUKNews(3),
-      getCanadaNews(3)
+      getAfricaNews(3).catch(() => []),
+      getAmericasNews(3).catch(() => []),
+      getAustraliaNews(3).catch(() => []),
+      getAsiaNews(3).catch(() => []),
+      getEuropeNews(3).catch(() => []),
+      getUKNews(3).catch(() => []),
+      getCanadaNews(3).catch(() => [])
     ]);
 
     return {
